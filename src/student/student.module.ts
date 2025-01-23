@@ -5,7 +5,6 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Student } from 'src/models/student.modal';
 import { CloudinaryHelper } from 'src/helper/cloudnary';
 
-
 @Module({
   imports: [
     SequelizeModule.forFeature([Student]),

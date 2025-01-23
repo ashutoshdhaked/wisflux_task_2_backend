@@ -33,7 +33,7 @@ export class AdminService {
     return await this.adminModel.create(completeData);
   }
 
-  async singIn(adminData , response): Promise<string> {
+  async singIn(adminData , response): Promise<{token : string , message : string ,name :string}> {
     if (!adminData.password) {
       throw new Error('Password is required');
     }
@@ -57,7 +57,7 @@ export class AdminService {
     console.log({comparePass});
     
     if(!comparePass){
-        return "Password Incorrect !!";
+      throw new Error("Password Incorrect !!");
     }  
        
     const payload = { email: admin.email};
@@ -65,10 +65,8 @@ export class AdminService {
       expiresIn: 7*24*60*60,
       secret: process.env.JWT_SECRET,
     });
-    response.cookie('access_token', access_token, {
-        httpOnly: true,
-      });
+    response.cookie('student_Management_token', access_token);
 
-    return 'Successfully login !!';
+    return  {token : access_token , message :"Successfully Login !!",name :admin.fullname};
   }
 }

@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Student } from '../models/student.modal';
+import { Op } from 'sequelize';
+import { query } from 'express';
 
 @Injectable()
 export class StudentService {
@@ -21,7 +23,7 @@ export class StudentService {
   }
 
   async findAll(): Promise<Student[]> {
-    return  await this.studentModel.findAll();
+    return await this.studentModel.findAll();
   }
 
   async findOne(id: number): Promise<Student> {
@@ -32,14 +34,39 @@ export class StudentService {
     return student;
   }
 
+  async search(key: string, text: string): Promise<Student[]> {
+    if (!text || !key) {
+      return this.findAll();
+    }
+
+    let query = {};
+    if(key === "semester"){
+      query = {
+        where :{
+          "semester" : parseInt(text)
+        }
+      }
+    }
+     else{
+      query = {
+        where: {
+          [key]: {
+            [Op.like]: `%${text}%`,
+          },
+        },
+      };
+     }
+    return await this.studentModel.findAll(query);
+  }
+
   async update(id: number, updateData: Partial<Student>): Promise<Student> {
     const student = await this.findOne(id);
     return student.update(updateData);
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: number): Promise<Student> {
     const student = await this.findOne(id);
     await student.destroy();
+    return student;
   }
-
 }
