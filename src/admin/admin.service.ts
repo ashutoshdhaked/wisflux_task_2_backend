@@ -30,10 +30,10 @@ export class AdminService {
     completeData.password = await this.passwordHelper.hashPassword(
       completeData.password,
     );
-    return await this.adminModel.create(completeData);
+    return  this.adminModel.create(completeData);
   }
 
-  async singIn(adminData , response): Promise<{token : string , message : string ,name :string}> {
+  async singIn(adminData , response){
     if (!adminData.password) {
       throw new Error('Password is required');
     }
@@ -62,10 +62,12 @@ export class AdminService {
        
     const payload = { email: admin.email};
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: 7*24*60*60,
+      expiresIn: '7d',
       secret: process.env.JWT_SECRET,
     });
-    response.cookie('student_Management_token', access_token);
+    response.cookie('student_Management_token', access_token,{
+      httpOnly :true,
+       });
 
     return  {token : access_token , message :"Successfully Login !!",name :admin.fullname};
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller,Post, Res } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { Admin } from 'src/models/admin.modal';
 
